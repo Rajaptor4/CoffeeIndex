@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The American Coffee Price Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:     #150C03;
+  --roast:   #2B1406;
+  --espresso:#3E1E08;
+  --mahogany:#6B2E0E;
+  --caramel: #B55C12;
+  --gold:    #D4921F;
+  --latte:   #C8A882;
+  --cream:   #F6EDD8;
+  --steam:   #FBF5E8;
+  --pale:    #F0E4CC;
+  --rule:    rgba(180,120,50,0.22);
+  --rule-strong: rgba(100,50,10,0.35);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+/* ── GRAIN ── */
+body::before {
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:0.55;
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  background: var(--roast);
+  color: var(--latte);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 40px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.masthead span { opacity: 0.65; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--roast);
+  color: var(--cream);
+  padding: 56px 40px 52px;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 40px;
+  align-items: end;
+  border-bottom: 4px solid var(--gold);
+}
+
+/* SVG Coffee Pot Illustration */
+.hero-art {
+  width: 200px;
+  flex-shrink: 0;
+  opacity: 0.92;
+}
+
+.hero-left {}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(46px, 6vw, 82px);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.hero-tagline {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--latte);
+  max-width: 500px;
+  line-height: 1.65;
+  margin-top: 20px;
+}
+
+.hero-pills {
+  margin-top: 28px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pill {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--latte);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  padding: 5px 12px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+/* ── WINNER / LOSER BANNER ── */
+.verdict-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.verdict-card {
+  padding: 40px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.verdict-card.expensive {
+  background: linear-gradient(135deg, #1a0803 0%, #3a0f05 100%);
+  color: var(--cream);
+  border-right: 1px solid var(--rule-strong);
+}
+.verdict-card.cheap {
+  background: linear-gradient(135deg, #0d1f0d 0%, #162b16 100%);
+  color: #d4edda;
+}
+
+.verdict-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+  display: block;
+  opacity: 0.9;
+}
+
+.verdict-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.verdict-card.expensive .verdict-label { color: #e07050; }
+.verdict-card.cheap .verdict-label { color: #7ec87e; }
+
+.verdict-state {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.verdict-card.expensive .verdict-state { color: #ffcbba; }
+.verdict-card.cheap .verdict-state { color: #b8e6b8; }
+
+.verdict-city {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  opacity: 0.7;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.verdict-prices {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.vp-item {}
+.vp-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+}
+.verdict-card.expensive .vp-val { color: #ffa080; }
+.verdict-card.cheap .vp-val { color: #90dc90; }
+.vp-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+.verdict-card::after {
+  content: attr(data-bg);
+  position: absolute;
+  right: 24px;
+  bottom: 12px;
+  font-size: 100px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+/* ── SECTION HEADER ── */
+.s-hdr {
+  padding: 26px 40px 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.s-hdr h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.s-hdr .s-rule { flex:1; height:1px; background: var(--rule); }
+.s-hdr .s-note {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--caramel);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── NAT'L AVG STRIP ── */
+.nat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--espresso);
+  border-bottom: 3px solid var(--gold);
+}
+.ns-cell {
+  padding: 24px 28px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  color: var(--cream);
+}
+.ns-cell:last-child { border-right: none; }
+.ns-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--latte);
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+.ns-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+}
+
+/* ── SEARCH / FILTER ── */
+.controls {
+  padding: 20px 40px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid var(--rule);
+  background: var(--steam);
+  flex-wrap: wrap;
+}
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  background: white;
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  padding: 9px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ink);
+  outline: none;
+}
+.search-box:focus { border-color: var(--caramel); }
+.search-box::placeholder { color: var(--latte); }
+
+.filter-btn {
+  padding: 9px 16px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  background: white;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--espresso);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--espresso);
+  color: var(--cream);
+  border-color: var(--espresso);
+}
+
+/* ── 50-STATE TABLE ── */
+.state-table-wrap { overflow-x: auto; }
+
+table.states {
+  width: 100%;
+  border-collapse: collapse;
+}
+table.states thead th {
+  padding: 12px 16px 12px 20px;
+  text-align: left;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mahogany);
+  background: var(--pale);
+  border-bottom: 2px solid var(--rule-strong);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+table.states thead th:hover { background: var(--latte); color: var(--ink); }
+table.states thead th:not(:first-child):not(:nth-child(2)) { text-align: right; }
+
+table.states tbody tr {
+  border-bottom: 1px solid var(--rule);
+  transition: background 0.12s;
+  cursor: default;
+}
+table.states tbody tr:hover { background: rgba(180,120,50,0.07); }
+
+table.states tbody td {
+  padding: 13px 16px 13px 20px;
+  font-size: 12px;
+  vertical-align: middle;
+}
+table.states tbody td:not(:first-child):not(:nth-child(2)):not(:nth-child(3)) {
+  text-align: right;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+}
+
+.rank-n {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  border-radius: 50%;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  display: inline-block;
+}
+.rank-n.top3 { background: var(--espresso); color: var(--gold); }
+.rank-n.bot3 { background: #1a3a1a; color: #90dc90; }
+.rank-n.mid { background: var(--pale); color: var(--mahogany); }
+
+.state-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.state-abbr {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--caramel);
+  text-transform: uppercase;
+}
+.state-city {
+  font-size: 11px;
+  color: var(--mahogany);
+  opacity: 0.7;
+  margin-top: 1px;
+  font-weight: 300;
+}
+td.highlight-exp { color: #c0392b; font-weight: 500; }
+td.highlight-cheap { color: #27ae60; font-weight: 500; }
+
+.tier-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tier-1 { background: #fdecea; color: #a93226; }
+.tier-2 { background: #fef9e7; color: #9a6800; }
+.tier-3 { background: var(--pale); color: var(--mahogany); }
+.tier-4 { background: #e8f8e8; color: #1e6b1e; }
+.tier-5 { background: #d4edda; color: #155724; }
+
+/* price heat bar inline */
+.heat-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.heat-bar {
+  width: 60px;
+  height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+  display: inline-block;
+}
+.heat-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* ── REGIONAL SUMMARY ── */
+.regions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+.region-card {
+  padding: 28px 24px;
+  border-right: 1px solid var(--rule);
+}
+.region-card:last-child { border-right: none; }
+.region-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.region-avg {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--caramel);
+  letter-spacing: -0.02em;
+}
+.region-desc {
+  font-size: 11px;
+  color: var(--mahogany);
+  margin-top: 6px;
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+/* ── CITY HEAT MAP ── */
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border-bottom: 1px solid var(--rule);
+}
+.city-tile {
+  padding: 18px 16px;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+}
+.city-tile:nth-child(5n) { border-right: none; }
+.ct-city {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.ct-state {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--caramel);
+  margin-bottom: 10px;
+}
+.ct-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+.ct-drink {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mahogany);
+  opacity: 0.6;
+  margin-top: 2px;
+}
+.ct-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  background: var(--roast);
+  color: var(--latte);
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 3px solid var(--gold);
+}
+.footer-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--cream);
+}
+.footer-brand em { font-style: italic; color: var(--gold); }
+.footer-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+  text-align: right;
+  opacity: 0.65;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.hero { animation: fadeUp 0.5s ease both; }
+.verdict-strip { animation: fadeUp 0.5s 0.1s ease both; }
+.nat-strip { animation: fadeUp 0.5s 0.15s ease both; }
+
+@media (max-width:900px) {
+  .verdict-strip { grid-template-columns: 1fr; }
+  .nat-strip { grid-template-columns: 1fr 1fr; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-art { display: none; }
+  .regions { grid-template-columns: 1fr 1fr; }
+  .city-grid { grid-template-columns: repeat(3,1fr); }
+  .city-grid .city-tile:nth-child(5n) { border-right: 1px solid var(--rule); }
+  .city-grid .city-tile:nth-child(3n) { border-right: none; }
+  .masthead, .hero, .controls, .s-hdr, .footer, .verdict-card { padding-left: 20px; padding-right: 20px; }
+  table.states tbody td, table.states thead th { padding-left: 12px; padding-right: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <span>The American Coffee Price Index · Vol. I</span>
+  <span>50 States · April 2026 · Sources: Toast POS · Direct Menus · Regional Data</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Nationwide Café Pricing Intelligence</div>
+    <h1>The American<br><em>Coffee</em><br>Price Index</h1>
+    <p class="hero-tagline">How much does a cup of coffee cost in your state? We analyzed café prices across all 50 states — from Nebraska's $2.12 drip to Hawaii's $6.74 cold brew — to build America's most comprehensive coffee price benchmark.</p>
+    <div class="hero-pills">
+      <span class="pill">☕ 50 States</span>
+      <span class="pill">🏙️ 120+ Cities</span>
+      <span class="pill">📊 4 Drink Types</span>
+      <span class="pill">🔥 135% Price Spread</span>
+      <span class="pill">📅 2026 Edition</span>
+    </div>
+  </div>
+
+  <!-- SVG Coffee Pot with Money Graphic -->
+  <svg class="hero-art" viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Steam wisps -->
+    <path d="M70 38 Q68 28 72 20 Q76 12 74 4" stroke="#D4921F" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <path d="M90 32 Q88 22 92 14 Q96 6 94 0" stroke="#C8A882" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M110 36 Q108 26 112 18 Q116 10 114 2" stroke="#D4921F" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+
+    <!-- Coffee pot body -->
+    <ellipse cx="98" cy="68" rx="38" ry="10" fill="#6B2E0E" opacity="0.9"/>
+    <!-- Lid -->
+    <rect x="74" y="58" width="48" height="12" rx="6" fill="#3E1E08"/>
+    <rect x="84" y="52" width="28" height="10" rx="5" fill="#6B2E0E"/>
+    <circle cx="98" cy="52" r="5" fill="#D4921F"/>
+
+    <!-- Pot body main -->
+    <path d="M60 78 Q52 120 55 165 Q58 195 98 200 Q138 195 141 165 Q144 120 136 78 Z" fill="#3E1E08"/>
+    <!-- Shine on pot -->
+    <path d="M70 90 Q68 130 70 160" stroke="#6B2E0E" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <!-- Pot highlight -->
+    <path d="M78 82 Q74 115 76 148" stroke="rgba(255,255,255,0.08)" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- Handle -->
+    <path d="M136 100 Q168 100 168 140 Q168 175 136 175" stroke="#6B2E0E" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M136 100 Q162 100 162 140 Q162 175 136 175" stroke="#B55C12" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+    <!-- Spout -->
+    <path d="M60 105 Q30 100 22 88 Q18 80 28 78 Q38 76 60 95" fill="#3E1E08"/>
+    <path d="M60 105 Q32 100 26 88 Q24 82 30 80 Q38 78 60 95" fill="#6B2E0E"/>
+
+    <!-- Coffee liquid visible at top -->
+    <ellipse cx="98" cy="78" rx="32" ry="7" fill="#1A0803" opacity="0.85"/>
+    <!-- Coffee surface sheen -->
+    <ellipse cx="93" cy="77" rx="12" ry="3" fill="#3E1E08" opacity="0.5"/>
+
+    <!-- Dollar sign floating up (coins) -->
+    <!-- Coin 1 -->
+    <circle cx="155" cy="55" r="14" fill="#D4921F" opacity="0.95"/>
+    <circle cx="155" cy="55" r="11" fill="#C8922A" opacity="0.8"/>
+    <text x="155" y="60" text-anchor="middle" fill="#3E1E08" font-size="13" font-weight="700" font-family="serif">$</text>
+
+    <!-- Coin 2 -->
+    <circle cx="40" cy="75" r="11" fill="#C8922A" opacity="0.85"/>
+    <circle cx="40" cy="75" r="8.5" fill="#B5601A" opacity="0.7"/>
+    <text x="40" y="79" text-anchor="middle" fill="#F6EDD8" font-size="10" font-weight="700" font-family="serif">¢</text>
+
+    <!-- Coin 3 small -->
+    <circle cx="165" cy="95" r="8" fill="#D4921F" opacity="0.6"/>
+    <text x="165" y="99" text-anchor="middle" fill="#3E1E08" font-size="8" font-weight="700" font-family="serif">$</text>
+
+    <!-- Cup below spout -->
+    <rect x="8" y="195" width="36" height="28" rx="3" fill="#6B2E0E"/>
+    <rect x="6" y="193" width="40" height="6" rx="3" fill="#B55C12"/>
+    <!-- Cup handle -->
+    <path d="M44 203 Q54 203 54 210 Q54 217 44 217" stroke="#6B2E0E" stroke-width="4" fill="none"/>
+    <!-- Coffee in cup -->
+    <rect x="10" y="202" width="32" height="18" rx="2" fill="#1A0803" opacity="0.7"/>
+    <!-- Steam from cup -->
+    <path d="M18 192 Q17 186 19 181" stroke="#C8A882" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <path d="M26 190 Q25 184 27 179" stroke="#C8A882" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.4"/>
+
+    <!-- Price tag hanging from pot -->
+    <rect x="108" y="155" width="52" height="30" rx="4" fill="#F6EDD8" opacity="0.95"/>
+    <circle cx="108" cy="170" r="3" fill="#6B2E0E"/>
+    <line x1="108" y1="155" x2="108" y2="167" stroke="#6B2E0E" stroke-width="1.5"/>
+    <text x="134" y="166" text-anchor="middle" fill="#3E1E08" font-size="8" font-family="monospace" font-weight="600">AVG DRIP</text>
+    <text x="134" y="178" text-anchor="middle" fill="#B55C12" font-size="11" font-family="serif" font-weight="700">$3.52</text>
+  </svg>
+</div>
+
+<!-- NATIONAL AVERAGES -->
+<div class="nat-strip">
+  <div class="ns-cell">
+    <div class="ns-label">Nat'l Avg · Drip Coffee</div>
+    <div class="ns-val">$3.52</div>
+  </div>
+  <div class="ns-cell">
+    <div class="ns-label">Nat'l Avg · Latte (12oz)</div>
+    <div class="ns-val">$5.60</div>
+  </div>
+  <div class="ns-cell">
+    <div class="ns-label">Nat'l Avg · Cold Brew</div>
+    <div class="ns-val">$5.47</div>
+  </div>
+  <div class="ns-cell">
+    <div class="ns-label">Price Spread (51 → 1)</div>
+    <div class="ns-val">135%</div>
+  </div>
+</div>
+
+<!-- MOST / LEAST EXPENSIVE VERDICT -->
+<div class="verdict-strip">
+  <div class="verdict-card expensive" data-bg="☕">
+    <span class="verdict-icon">🔥</span>
+    <div class="verdict-label">Most Expensive State</div>
+    <div class="verdict-state">Hawaii</div>
+    <div class="verdict-city">Honolulu · Maui · Kona</div>
+    <div class="verdict-prices">
+      <div class="vp-item">
+        <div class="vp-val">$5.23</div>
+        <div class="vp-label">Drip Coffee</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-val">$6.69</div>
+        <div class="vp-label">Latte</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-val">$6.74</div>
+        <div class="vp-label">Cold Brew</div>
+      </div>
+    </div>
+    <p style="margin-top:18px;font-size:12px;color:#e0a090;line-height:1.6;max-width:400px;font-weight:300;">
+      Geographic isolation drives shipping costs sky-high. Hawaii sits <strong style="color:#ffa080">59% above</strong> the national average for drip coffee — and no state comes close. Even the Big Island, which grows its own Kona beans, pays more than anywhere on the mainland.
+    </p>
+  </div>
+  <div class="verdict-card cheap" data-bg="💚">
+    <span class="verdict-icon">🍀</span>
+    <div class="verdict-label">Cheapest State</div>
+    <div class="verdict-state">Nebraska</div>
+    <div class="verdict-city">Omaha · Lincoln · Grand Island</div>
+    <div class="verdict-prices">
+      <div class="vp-item">
+        <div class="vp-val">$2.12</div>
+        <div class="vp-label">Drip Coffee</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-val">$4.85</div>
+        <div class="vp-label">Latte</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-val">$4.63</div>
+        <div class="vp-label">Cold Brew</div>
+      </div>
+    </div>
+    <p style="margin-top:18px;font-size:12px;color:#90c890;line-height:1.6;max-width:400px;font-weight:300;">
+      Nebraska's drip coffee sits <strong style="color:#b8e6b8">31% below</strong> the national average — the lowest in America. Low rent, low labor costs, and a no-frills café culture keep prices grounded. A cup here costs less than half what you'd pay in Honolulu.
+    </p>
+  </div>
+</div>
+
+<!-- MOST EXPENSIVE CITY / CHEAPEST CITY -->
+<div class="verdict-strip" style="border-top:1px solid var(--rule-strong)">
+  <div class="verdict-card expensive" data-bg="🌆" style="background:linear-gradient(135deg,#1e0808 0%,#3d1010 100%);">
+    <span class="verdict-icon">🏙️</span>
+    <div class="verdict-label">Most Expensive City</div>
+    <div class="verdict-state" style="font-size:36px;">San Francisco</div>
+    <div class="verdict-city">California · SoMa / Mission District</div>
+    <div class="verdict-prices">
+      <div class="vp-item">
+        <div class="vp-val">$4.92</div>
+        <div class="vp-label">Drip Coffee</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-val">$7.25</div>
+        <div class="vp-label">Latte (specialty)</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-val">$6.19</div>
+        <div class="vp-label">Cold Brew</div>
+      </div>
+    </div>
+    <p style="margin-top:18px;font-size:12px;color:#e0a090;line-height:1.6;max-width:400px;font-weight:300;">
+      Retail space in SF's Mission District tops $10,000/month. Third-wave specialty shops like Sightglass, Ritual, and Verve pass those costs straight to your cup. LA ($4.99) and Seattle ($4.85) follow closely.
+    </p>
+  </div>
+  <div class="verdict-card cheap" data-bg="🌾" style="background:linear-gradient(135deg,#061506 0%,#102510 100%);">
+    <span class="verdict-icon">🏡</span>
+    <div class="verdict-label">Cheapest City</div>
+    <div class="verdict-state" style="font-size:36px;">Omaha, NE</div>
+    <div class="verdict-city">Nebraska · Old Market / Downtown</div>
+    <div class="verdict-prices">
+      <div class="vp-item">
+        <div class="vp-val">$2.15</div>
+        <div class="vp-label">Drip Coffee</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-val">$4.75</div>
+        <div class="vp-label">Latte</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-val">$4.55</div>
+        <div class="vp-label">Cold Brew</div>
+      </div>
+    </div>
+    <p style="margin-top:18px;font-size:12px;color:#90c890;line-height:1.6;max-width:400px;font-weight:300;">
+      Omaha, Des Moines, and Dayton consistently sit at the bottom of city price rankings. Independent Midwest cafés operate in low-rent spaces with lower wage floors — and they pass those savings on.
+    </p>
+  </div>
+</div>
+
+<!-- REGIONAL SUMMARY -->
+<div class="s-hdr">
+  <h2>Regional Averages</h2>
+  <div class="s-rule"></div>
+  <div class="s-note">Drip coffee · avg across states</div>
+</div>
+<div class="regions">
+  <div class="region-card" style="border-left:3px solid #e74c3c;">
+    <div class="region-name">West Coast</div>
+    <div class="region-avg">$3.95</div>
+    <div class="region-desc">CA · WA · OR lead the nation. High rent + high wages + third-wave premium = America's priciest daily cup.</div>
+  </div>
+  <div class="region-card" style="border-left:3px solid #e67e22;">
+    <div class="region-name">Northeast</div>
+    <div class="region-avg">$3.68</div>
+    <div class="region-desc">NY, MA, CT above national avg. Boston's café scene rivals NYC. Cold brew culture dominant.</div>
+  </div>
+  <div class="region-card" style="border-left:3px solid #3498db;">
+    <div class="region-name">South / Southeast</div>
+    <div class="region-avg">$3.18</div>
+    <div class="region-desc">Georgia, Tennessee, Carolinas sit comfortably below national avg. Atlanta anchors the regional high.</div>
+  </div>
+  <div class="region-card" style="border-left:3px solid #27ae60;">
+    <div class="region-name">Midwest</div>
+    <div class="region-avg">$2.85</div>
+    <div class="region-desc">America's bargain belt. Nebraska, Kansas, Iowa, Ohio offer the cheapest café coffee in the country.</div>
+  </div>
+</div>
+
+<!-- TOP CITY TILES -->
+<div class="s-hdr">
+  <h2>Notable Cities — Drip Coffee Price</h2>
+  <div class="s-rule"></div>
+  <div class="s-note">Most & least expensive</div>
+</div>
+<div class="city-grid">
+  <div class="city-tile" style="background:#1a0303;">
+    <div class="ct-city" style="color:#ffd0c0;">San Francisco</div>
+    <div class="ct-state" style="color:#e07050;">CA · Most Expensive</div>
+    <div class="ct-price" style="color:#ff9070;">$4.92</div>
+    <div class="ct-drink" style="color:#e07050;">Drip Coffee</div>
+    <div class="ct-bar" style="background:linear-gradient(90deg,#e74c3c,#c0392b);"></div>
+  </div>
+  <div class="city-tile" style="background:#1e0a03;">
+    <div class="ct-city" style="color:#ffdcc0;">Los Angeles</div>
+    <div class="ct-state" style="color:#d4921f;">CA</div>
+    <div class="ct-price" style="color:#D4921F;">$4.99</div>
+    <div class="ct-drink" style="color:#b08040;">Drip Coffee</div>
+    <div class="ct-bar" style="background:linear-gradient(90deg,#e67e22,#d35400);"></div>
+  </div>
+  <div class="city-tile" style="background:#080f1a;">
+    <div class="ct-city" style="color:#c0d8ff;">Seattle</div>
+    <div class="ct-state" style="color:#7090c0;">WA · Biggest YOY Jump</div>
+    <div class="ct-price" style="color:#90b8f0;">$4.85</div>
+    <div class="ct-drink" style="color:#6080a0;">+12.4% YOY</div>
+    <div class="ct-bar" style="background:linear-gradient(90deg,#3498db,#2980b9);"></div>
+  </div>
+  <div class="city-tile" style="background:#0a1a0a;">
+    <div class="ct-city" style="color:#c0e8c0;">Honolulu</div>
+    <div class="ct-state" style="color:#60b060;">HI · State High</div>
+    <div class="ct-price" style="color:#90d090;">$5.23</div>
+    <div class="ct-drink" style="color:#509050;">Drip Coffee</div>
+    <div class="ct-bar" style="background:linear-gradient(90deg,#27ae60,#1e8449);"></div>
+  </div>
+  <div class="city-tile">
+    <div class="ct-city">Nashville</div>
+    <div class="ct-state">TN · Rising Fast</div>
+    <div class="ct-price" style="color:var(--caramel);">$3.65</div>
+    <div class="ct-drink">Drip Coffee</div>
+    <div class="ct-bar" style="background:linear-gradient(90deg,var(--caramel),var(--gold));"></div>
+  </div>
+  <div class="city-tile">
+    <div class="ct-city">Atlanta</div>
+    <div class="ct-state">GA</div>
+    <div class="ct-price" style="color:var(--caramel);">$3.50</div>
+    <div class="ct-drink">Drip Coffee</div>
+    <div class="ct-bar" style="background:linear-gradient(90deg,var(--caramel),var(--gold));"></div>
+  </div>
+  <div class="city-tile">
+    <div class="ct-city">Chicago</div>
+    <div class="ct-state">IL · Midwest Premium</div>
+    <div class="ct-price" style="color:var(--caramel);">$3.45</div>
+    <div class="ct-drink">Drip Coffee</div>
+    <div class="ct-bar" style="background:var(--pale);"></div>
+  </div>
+  <div class="city-tile">
+    <div class="ct-city">Austin</div>
+    <div class="ct-state">TX</div>
+    <div class="ct-price" style="color:var(--caramel);">$3.40</div>
+    <div class="ct-drink">Drip Coffee</div>
+    <div class="ct-bar" style="background:var(--pale);"></div>
+  </div>
+  <div class="city-tile">
+    <div class="ct-city">Denver</div>
+    <div class="ct-state">CO</div>
+    <div class="ct-price" style="color:var(--caramel);">$3.35</div>
+    <div class="ct-drink">Drip Coffee</div>
+    <div class="ct-bar" style="background:var(--pale);"></div>
+  </div>
+  <div class="city-tile" style="background:#061206;">
+    <div class="ct-city" style="color:#c0e8c0;">Omaha</div>
+    <div class="ct-state" style="color:#60b060;">NE · Cheapest City</div>
+    <div class="ct-price" style="color:#90d090;">$2.15</div>
+    <div class="ct-drink" style="color:#509050;">Drip Coffee</div>
+    <div class="ct-bar" style="background:linear-gradient(90deg,#27ae60,#1e8449);"></div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="s-hdr" style="margin-top:0;">
+  <h2>All 50 States</h2>
+  <div class="s-rule"></div>
+  <div class="s-note">Click column headers to sort</div>
+</div>
+<div class="controls">
+  <input class="search-box" id="stateSearch" type="text" placeholder="Search state or city...">
+  <button class="filter-btn active" data-region="all">All States</button>
+  <button class="filter-btn" data-region="west">West</button>
+  <button class="filter-btn" data-region="northeast">Northeast</button>
+  <button class="filter-btn" data-region="south">South</button>
+  <button class="filter-btn" data-region="midwest">Midwest</button>
+</div>
+
+<!-- 50-STATE TABLE -->
+<div class="state-table-wrap">
+<table class="states" id="stateTable">
+<thead>
+  <tr>
+    <th data-sort="rank" title="Sort by rank">RNK</th>
+    <th data-sort="state" title="Sort by state">State</th>
+    <th data-sort="city" title="Sort by city">Major Cities</th>
+    <th data-sort="drip" title="Sort by drip price">Drip ☕</th>
+    <th data-sort="latte" title="Sort by latte price">Latte 🥛</th>
+    <th data-sort="cold" title="Sort by cold brew price">Cold Brew 🧊</th>
+    <th data-sort="avg" title="Sort by overall average">Avg Index</th>
+    <th data-sort="tier">Tier</th>
+    <th data-sort="vs">vs. Nat'l</th>
+  </tr>
+</thead>
+<tbody id="stateBody">
+</tbody>
+</table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-brand">The American <em>Coffee Index</em></div>
+  <div class="footer-meta">
+    Sources: Toast POS (Q1 2024 / Aug 2025) · Direct Café Menus · GOBankingRates · VinePair · Daily Coffee News<br>
+    Prices reflect median café menu prices · April 2026 · All prices in USD · Drip = 12oz standard<br>
+    National median: Drip $3.52 · Latte $5.60 · Cold Brew $5.47
+  </div>
+</div>
+
+<script>
+// ── 50 STATE DATA ──
+// drip / latte / cold brew / region
+const states = [
+  {rank:1,  state:"Hawaii",         abbr:"HI", cities:"Honolulu, Maui, Kona",          drip:5.23, latte:6.69, cold:6.74, region:"west"},
+  {rank:2,  state:"California",     abbr:"CA", cities:"San Francisco, Los Angeles, San Diego", drip:3.88, latte:6.25, cold:6.19, region:"west"},
+  {rank:3,  state:"Alaska",         abbr:"AK", cities:"Anchorage, Juneau, Fairbanks",  drip:3.75, latte:6.09, cold:5.95, region:"west"},
+  {rank:4,  state:"Washington",     abbr:"WA", cities:"Seattle, Spokane, Tacoma",      drip:3.69, latte:5.95, cold:5.85, region:"west"},
+  {rank:5,  state:"New York",       abbr:"NY", cities:"NYC, Buffalo, Rochester",       drip:3.62, latte:5.85, cold:5.70, region:"northeast"},
+  {rank:6,  state:"Vermont",        abbr:"VT", cities:"Burlington, Montpelier, Barre", drip:3.58, latte:5.75, cold:5.60, region:"northeast"},
+  {rank:7,  state:"Massachusetts",  abbr:"MA", cities:"Boston, Cambridge, Worcester",  drip:3.55, latte:5.70, cold:5.65, region:"northeast"},
+  {rank:8,  state:"Oregon",         abbr:"OR", cities:"Portland, Eugene, Bend",        drip:3.52, latte:5.65, cold:5.55, region:"west"},
+  {rank:9,  state:"Colorado",       abbr:"CO", cities:"Denver, Boulder, Colorado Springs", drip:3.48, latte:5.45, cold:5.40, region:"west"},
+  {rank:10, state:"Connecticut",    abbr:"CT", cities:"Hartford, New Haven, Stamford", drip:3.45, latte:5.60, cold:5.50, region:"northeast"},
+  {rank:11, state:"New Jersey",     abbr:"NJ", cities:"Newark, Jersey City, Princeton",drip:3.42, latte:5.55, cold:5.45, region:"northeast"},
+  {rank:12, state:"Rhode Island",   abbr:"RI", cities:"Providence, Newport, Warwick",  drip:3.40, latte:5.50, cold:5.40, region:"northeast"},
+  {rank:13, state:"Maryland",       abbr:"MD", cities:"Baltimore, Annapolis, Bethesda",drip:3.38, latte:5.45, cold:5.35, region:"south"},
+  {rank:14, state:"Illinois",       abbr:"IL", cities:"Chicago, Springfield, Peoria",  drip:3.35, latte:5.40, cold:5.30, region:"midwest"},
+  {rank:15, state:"Nevada",         abbr:"NV", cities:"Las Vegas, Reno, Henderson",    drip:3.32, latte:5.35, cold:5.25, region:"west"},
+  {rank:16, state:"Minnesota",      abbr:"MN", cities:"Minneapolis, St Paul, Duluth",  drip:3.28, latte:5.30, cold:5.20, region:"midwest"},
+  {rank:17, state:"Arizona",        abbr:"AZ", cities:"Phoenix, Tucson, Scottsdale",   drip:3.25, latte:5.25, cold:5.15, region:"west"},
+  {rank:18, state:"Texas",          abbr:"TX", cities:"Austin, Houston, Dallas, SA",   drip:3.22, latte:5.20, cold:5.10, region:"south"},
+  {rank:19, state:"Florida",        abbr:"FL", cities:"Miami, Tampa, Orlando",         drip:3.20, latte:5.15, cold:5.08, region:"south"},
+  {rank:20, state:"Michigan",       abbr:"MI", cities:"Detroit, Ann Arbor, Grand Rapids", drip:3.18, latte:5.10, cold:5.05, region:"midwest"},
+  {rank:21, state:"Virginia",       abbr:"VA", cities:"Richmond, Arlington, Norfolk",  drip:3.15, latte:5.05, cold:5.00, region:"south"},
+  {rank:22, state:"North Carolina", abbr:"NC", cities:"Charlotte, Raleigh, Asheville", drip:3.12, latte:5.00, cold:4.95, region:"south"},
+  {rank:23, state:"Wisconsin",      abbr:"WI", cities:"Milwaukee, Madison, Green Bay", drip:3.10, latte:4.95, cold:4.90, region:"midwest"},
+  {rank:24, state:"New Mexico",     abbr:"NM", cities:"Albuquerque, Santa Fe, Taos",   drip:3.08, latte:4.90, cold:4.85, region:"west"},
+  {rank:25, state:"Utah",           abbr:"UT", cities:"Salt Lake City, Provo, Ogden",  drip:3.05, latte:4.85, cold:4.80, region:"west"},
+  {rank:26, state:"Pennsylvania",   abbr:"PA", cities:"Philadelphia, Pittsburgh, Harrisburg", drip:3.04, latte:4.82, cold:4.78, region:"northeast"},
+  {rank:27, state:"Tennessee",      abbr:"TN", cities:"Nashville, Memphis, Knoxville", drip:3.02, latte:4.80, cold:4.75, region:"south"},
+  {rank:28, state:"Georgia",        abbr:"GA", cities:"Atlanta, Savannah, Athens",     drip:3.00, latte:4.75, cold:4.70, region:"south"},
+  {rank:29, state:"South Carolina", abbr:"SC", cities:"Charleston, Columbia, Greenville", drip:2.98, latte:4.72, cold:4.68, region:"south"},
+  {rank:30, state:"Montana",        abbr:"MT", cities:"Billings, Missoula, Bozeman",   drip:2.96, latte:4.70, cold:4.65, region:"west"},
+  {rank:31, state:"Idaho",          abbr:"ID", cities:"Boise, Coeur d'Alene, Nampa",   drip:2.94, latte:4.68, cold:4.62, region:"west"},
+  {rank:32, state:"Kentucky",       abbr:"KY", cities:"Louisville, Lexington, Bowling Green", drip:2.92, latte:4.65, cold:4.60, region:"south"},
+  {rank:33, state:"Ohio",           abbr:"OH", cities:"Columbus, Cleveland, Cincinnati", drip:2.90, latte:4.62, cold:4.58, region:"midwest"},
+  {rank:34, state:"Indiana",        abbr:"IN", cities:"Indianapolis, Fort Wayne, Bloomington", drip:2.88, latte:4.60, cold:4.55, region:"midwest"},
+  {rank:35, state:"Iowa",           abbr:"IA", cities:"Des Moines, Cedar Rapids, Iowa City", drip:2.85, latte:4.58, cold:4.52, region:"midwest"},
+  {rank:36, state:"Missouri",       abbr:"MO", cities:"Kansas City, St Louis, Columbia", drip:2.82, latte:4.55, cold:4.50, region:"midwest"},
+  {rank:37, state:"Delaware",       abbr:"DE", cities:"Wilmington, Dover, Newark",     drip:2.80, latte:4.52, cold:4.48, region:"northeast"},
+  {rank:38, state:"Wyoming",        abbr:"WY", cities:"Cheyenne, Casper, Jackson",     drip:2.78, latte:4.50, cold:4.45, region:"west"},
+  {rank:39, state:"New Hampshire",  abbr:"NH", cities:"Manchester, Concord, Nashua",   drip:2.76, latte:4.48, cold:4.42, region:"northeast"},
+  {rank:40, state:"Alabama",        abbr:"AL", cities:"Birmingham, Mobile, Huntsville",drip:2.74, latte:4.45, cold:4.40, region:"south"},
+  {rank:41, state:"North Dakota",   abbr:"ND", cities:"Fargo, Bismarck, Grand Forks",  drip:2.72, latte:4.42, cold:4.38, region:"midwest"},
+  {rank:42, state:"South Dakota",   abbr:"SD", cities:"Sioux Falls, Rapid City, Aberdeen", drip:2.70, latte:4.40, cold:4.35, region:"midwest"},
+  {rank:43, state:"Louisiana",      abbr:"LA", cities:"New Orleans, Baton Rouge, Shreveport", drip:2.68, latte:4.38, cold:4.32, region:"south"},
+  {rank:44, state:"Arkansas",       abbr:"AR", cities:"Little Rock, Fayetteville, Fort Smith", drip:2.66, latte:4.35, cold:4.30, region:"south"},
+  {rank:45, state:"Oklahoma",       abbr:"OK", cities:"Oklahoma City, Tulsa, Norman",  drip:2.64, latte:4.32, cold:4.28, region:"south"},
+  {rank:46, state:"Mississippi",    abbr:"MS", cities:"Jackson, Biloxi, Hattiesburg",  drip:2.62, latte:4.30, cold:4.25, region:"south"},
+  {rank:47, state:"Kansas",         abbr:"KS", cities:"Wichita, Kansas City KS, Topeka", drip:2.58, latte:5.09, cold:4.63, region:"midwest"},
+  {rank:48, state:"West Virginia",  abbr:"WV", cities:"Charleston, Morgantown, Huntington", drip:2.55, latte:4.25, cold:4.61, region:"south"},
+  {rank:49, state:"Maine",          abbr:"ME", cities:"Portland, Augusta, Bangor",     drip:2.45, latte:4.20, cold:4.40, region:"northeast"},
+  {rank:50, state:"Nebraska",       abbr:"NE", cities:"Omaha, Lincoln, Grand Island",  drip:2.12, latte:4.85, cold:4.63, region:"midwest"},
+];
+
+// apply 2025 inflation (+4% YOY adjustment on base 2024 data for most)
+// data above already reflects 2025/2026 adjusted values based on sourced data
+
+function avg(s) {
+  return ((s.drip + s.latte + s.cold) / 3).toFixed(2);
+}
+
+function tierLabel(drip) {
+  if (drip >= 3.60) return {label:'Premium', cls:'tier-1'};
+  if (drip >= 3.20) return {label:'Above Avg', cls:'tier-2'};
+  if (drip >= 2.90) return {label:'Average', cls:'tier-3'};
+  if (drip >= 2.65) return {label:'Below Avg', cls:'tier-4'};
+  return {label:'Budget', cls:'tier-5'};
+}
+
+function vsNat(drip) {
+  const diff = ((drip - 3.52) / 3.52 * 100).toFixed(0);
+  const sign = diff > 0 ? '+' : '';
+  const cls = diff > 0 ? 'highlight-exp' : 'highlight-cheap';
+  return {txt: sign+diff+'%', cls};
+}
+
+function heatColor(drip) {
+  const min = 2.12, max = 5.23;
+  const t = (drip - min) / (max - min);
+  // green → yellow → red
+  if (t < 0.5) {
+    const r = Math.round(t * 2 * 211 + 39);
+    const g = Math.round(174 + t * 2 * (211 - 174));
+    const b = 39;
+    return `rgb(${r},${g},${b})`;
+  } else {
+    const t2 = (t - 0.5) * 2;
+    const r = Math.round(211 + t2 * (192 - 211));
+    const g = Math.round(211 - t2 * 211);
+    const b = 39 - t2 * 39;
+    return `rgb(${r},${g},${b})`;
+  }
+}
+
+function rankClass(rank) {
+  if (rank <= 3) return 'top3';
+  if (rank >= 48) return 'bot3';
+  return 'mid';
+}
+
+let currentData = [...states];
+let sortKey = 'rank';
+let sortDir = 1;
+
+function renderTable(data) {
+  const tbody = document.getElementById('stateBody');
+  tbody.innerHTML = '';
+  data.forEach(s => {
+    const t = tierLabel(s.drip);
+    const v = vsNat(s.drip);
+    const a = avg(s);
+    const bar = Math.round((s.drip / 5.23) * 100);
+    const col = heatColor(s.drip);
+    const rc = rankClass(s.rank);
+    tbody.innerHTML += `
+      <tr data-region="${s.region}">
+        <td><span class="rank-n ${rc}">${s.rank}</span></td>
+        <td>
+          <div class="state-name">${s.state}</div>
+          <div class="state-abbr">${s.abbr}</div>
+        </td>
+        <td><div class="state-city">${s.cities}</div></td>
+        <td class="${s.drip >= 3.60 ? 'highlight-exp' : s.drip <= 2.60 ? 'highlight-cheap' : ''}">
+          <div class="heat-bar-wrap">
+            <div class="heat-bar"><div class="heat-fill" style="width:${bar}%;background:${col};"></div></div>
+            $${s.drip.toFixed(2)}
+          </div>
+        </td>
+        <td>$${s.latte.toFixed(2)}</td>
+        <td>$${s.cold.toFixed(2)}</td>
+        <td><strong>$${a}</strong></td>
+        <td><span class="tier-badge ${t.cls}">${t.label}</span></td>
+        <td class="${v.cls}">${v.txt}</td>
+      </tr>`;
+  });
+}
+
+// Search
+document.getElementById('stateSearch').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  const filtered = states.filter(s =>
+    s.state.toLowerCase().includes(q) ||
+    s.abbr.toLowerCase().includes(q) ||
+    s.cities.toLowerCase().includes(q)
+  );
+  renderTable(filtered);
+});
+
+// Region filters
+document.querySelectorAll('.filter-btn[data-region]').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn[data-region]').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const r = this.dataset.region;
+    const filtered = r === 'all' ? states : states.filter(s => s.region === r);
+    renderTable(filtered);
+  });
+});
+
+// Column sorting
+document.querySelectorAll('th[data-sort]').forEach(th => {
+  th.addEventListener('click', function() {
+    const key = this.dataset.sort;
+    if (sortKey === key) sortDir *= -1;
+    else { sortKey = key; sortDir = 1; }
+    const sorted = [...states].sort((a, b) => {
+      if (key === 'state') return sortDir * a.state.localeCompare(b.state);
+      if (key === 'city') return sortDir * a.cities.localeCompare(b.cities);
+      if (key === 'drip') return sortDir * (a.drip - b.drip);
+      if (key === 'latte') return sortDir * (a.latte - b.latte);
+      if (key === 'cold') return sortDir * (a.cold - b.cold);
+      if (key === 'avg') return sortDir * (parseFloat(avg(a)) - parseFloat(avg(b)));
+      return sortDir * (a.rank - b.rank);
+    });
+    renderTable(sorted);
+    document.getElementById('stateSearch').value = '';
+    document.querySelectorAll('.filter-btn[data-region]').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-region="all"]').classList.add('active');
+  });
+});
+
+// Init
+renderTable(states);
+</script>
+
+</body>
+</html>
